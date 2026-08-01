@@ -1,42 +1,34 @@
-import { ParsedSVGScript } from "./SVGLoader";
-
-export interface ComputedStrokeTiming {
-  strokeId: string;
-  duration: number;
-  delay: number;
-  ease: number[];
-}
-
-/**
- * Calculates progressive handwriting animation timings across dynamically extracted SVG paths.
- *
- * @param script The parsed SVG script object containing all path definitions.
- * @param totalTargetDurationSec Total duration (in seconds) for the handwriting sequence.
- * @returns Array of timing configurations per stroke/path.
- */
 export function computeHandwritingSequence(
   script: ParsedSVGScript,
-  totalTargetDurationSec: number = 2.0
+  pixelsPerSecond: number = 700
 ): ComputedStrokeTiming[] {
-  const pathCount = script.paths.length;
-  if (pathCount === 0) return [];
-
-  const durationPerPath = totalTargetDurationSec / pathCount;
-  const interStrokePauseSec = 0.02;
+  if (script.paths.length === 0) return [];
 
   let accumulatedDelay = 0;
+  const interStrokePauseSec = 0.02;
 
   return script.paths.map((path) => {
-    const duration = Math.max(durationPerPath, 0.05);
-    const delay = accumulatedDelay;
+    // Create temporary SVG path to measure its real length
+    const temp = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "path"
+    );
 
+    temp.setAttribute("d", path.d);
+
+    const length = temp.getTotalLength();
+
+    // Constant writing speed
+    const duration = Math.max(length / pixelsPerSecond, 0.05);
+
+    const delay = accumulatedDelay;
     accumulatedDelay += duration + interStrokePauseSec;
 
     return {
       strokeId: path.id,
       duration,
       delay,
-      ease: [0.42, 0.0, 0.18, 1.0], // Fluid pen motion easing curve
+      ease: [0.42, 0.0, 0.18, 1.0],
     };
   });
 }
