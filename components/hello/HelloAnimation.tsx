@@ -30,6 +30,7 @@ export const HelloAnimation: React.FC<HelloAnimationProps> = ({
         setIsLoading(false);
       }
     }
+
     initSVGs();
   }, []);
 
@@ -42,7 +43,7 @@ export const HelloAnimation: React.FC<HelloAnimationProps> = ({
 
     const timer = setTimeout(() => {
       setIsHolding(false);
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % scripts.length);
+      setCurrentIndex((prev) => (prev + 1) % scripts.length);
     }, holdDurationMs);
 
     return () => clearTimeout(timer);
@@ -50,7 +51,7 @@ export const HelloAnimation: React.FC<HelloAnimationProps> = ({
 
   if (isLoading || scripts.length === 0) {
     return (
-      <div className="fixed inset-0 w-screen h-screen bg-green-500 flex items-center justify-center z-50 text-zinc-600 font-sans text-xs tracking-widest uppercase">
+      <div className="fixed inset-0 flex items-center justify-center bg-black text-zinc-600 z-50">
         Loading
       </div>
     );
@@ -59,9 +60,9 @@ export const HelloAnimation: React.FC<HelloAnimationProps> = ({
   const currentScript = scripts[currentIndex];
 
   return (
-    <div className="fixed inset-0 w-screen h-screen bg-green-500 text-white flex flex-col items-center justify-center overflow-hidden select-none z-50">
+    <div className="fixed inset-0 bg-black text-white flex flex-col items-center justify-center overflow-hidden select-none z-50">
       <div className="relative flex items-center justify-center w-full h-full">
-        <AnimatePresence mode="wait" intial={false}>
+        <AnimatePresence mode="wait" initial={true}>
           <HelloPlayer
             key={currentScript.id}
             script={currentScript}

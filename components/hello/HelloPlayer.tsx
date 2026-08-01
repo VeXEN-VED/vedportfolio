@@ -63,7 +63,9 @@ export const HelloPlayer: React.FC<HelloPlayerProps> = ({
                 pathLength: {
                   duration: timing ? timing.duration : 0.2,
                   delay: timing ? timing.delay : 0,
-                  ease: timing ? timing.ease : "easeInOut",
+                  ease: timing
+  ? (timing.ease as [number, number, number, number])
+  : "easeInOut",
                 },
                 opacity: {
                   duration: 0.01,
